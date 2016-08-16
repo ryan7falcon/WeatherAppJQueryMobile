@@ -1,0 +1,24 @@
+html {
+	
+}
+
+.icon {
+  height: 130px
+}
+
+.container{
+  display: flex;
+  font-size: 34px;
+  font-weight: 100;
+  max-width: 300px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.dayContainer{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  margin:55px
+}
