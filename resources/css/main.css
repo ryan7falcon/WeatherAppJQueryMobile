@@ -32,30 +32,22 @@ h1 {
   width: 50%;
 }
 
-html {
-	
-}
-
 .icon {
   height: 130px
 }
 
 .container{
-  display: flex;
-  font-size: 34px;
+  font-size: 24px;
   font-weight: 100;
   max-width: 300px;
   margin: 0 auto;
   text-align: center;
 }
-
-.dayContainer{
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
+.canvasContainer {
+  width:300px;
+  margin: auto;
 }
 
-.dayContainer div {
-  padding: 5px;
+#weatherForecastContainer {
+  margin-bottom: 20px;
 }
