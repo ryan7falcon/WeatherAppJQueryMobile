@@ -2,7 +2,7 @@
 <html>
 <head>
   <title>My Website</title>
-   <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css" />
+  <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css" />
   <link rel="stylesheet" href="resources/css/main.css">
 </head>
 <body>
@@ -26,58 +26,75 @@
 
 
     <!-- recent cities -->
-     <div id="collapse-recent" data-role="collapsible" data-collapsed="false">
+    <div id="collapse-recent" data-role="collapsible" data-collapsed="false">
       <h3>Recently Searched</h3>
-        <ul id="recent" data-role="listview" data-theme="g">
-        </ul>
-     </div>
+      <ul id="recent" data-role="listview" data-theme="g">
+      </ul>
+    </div>
     
   </div>
+
   <div id="forecastPage" data-role="page">
     <!-- header -->
     <div data-role="header" data-theme="b">
       <h1>Weather App</h1><a href="#home" data-icon="arrow-l" class="ui-btn-left" data-theme="b" >Today</a>
     </div>
+
+    <div id="weatherForecastContainer" role="main"></div>
+    <canvas id="myCanvas" width="400" height="400"><canvas>
+
   </div>
 
   <script id="recentListItems" type="text/x-handlebars-template">         
-        {{#each searchHistory}}
-          <li class="cityListItem"><a href="#">{{this}}</a></li>
-        {{/each}}       
-    </div>
-  </script>
+    {{#each searchHistory}}
+    <li class="cityListItem"><a href="#">{{this}}</a></li>
+    {{/each}}       
+  </div>
+</script>
 
-  <script id="today" type="text/x-handlebars-template">
-    <div class="dayContainer">
-      <div>{{city}}</div>
+<script id="today" type="text/x-handlebars-template">
 
-      
+  <div class="dayContainer">
+    <h1>{{city}}</h1>
 
-      <img class='icon' src="resources/images/weather-icons/{{icon}}.svg" alt="Weather" />  
-      <div>{{desc}}</div>  
-      <div>{{temp}} C</div>
-    </div>
-    
-  </script>
+    <img class='icon' src="resources/images/weather-icons/{{icon}}.svg" alt="Weather" />  
+    <div>{{desc}}</div>  
+    <div>{{temp}} C</div>
+  </div>
 
-  <script id="searchComponent" type="text/x-handlebars-template">
+</script>
 
-        
+<script id="forecast" type="text/x-handlebars-template">
+
+  <div class="forecastContainer">
+
+    <ul class="flex-container">
+      <li class="flex-item">Day: {{day}}</li>
+      <li class="flex-item"> <img class='icon' src="resources/images/weather-icons/{{icon}}.svg" alt="Weather" />  </li>
+      <li class="flex-item">{{temp}} C</li>
+      <ul>
+
+      </div>
+    </script>
+
+    <script id="searchComponent" type="text/x-handlebars-template">
+
       <input type="search" id="searchInput" list="search"><br>
 
       <datalist id="search" name="search">
-            {{#each defaultCities}}
-              <option>{{this}}    
-            {{/each}}
-      </datalist>
+        {{#each defaultCities}}
+        <option>{{this}}    
+          {{/each}}
+        </datalist>
 
-  </script>
+      </script>
 
-  <script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
-  <script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.5/handlebars.js"></script>
-  <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?libraries=places&key=AIzaSyAGVhV_ccOoZ3K9fGPCCvaOEUEdYd--hPI"></script>
-  <script src="https://npmcdn.com/axios/dist/axios.min.js"></script>
-  <script src="resources/js/script.js" type="text/javascript"></script>
-</body>
-</html>
+      <script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
+      <script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.5/handlebars.js"></script>
+      <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?libraries=places&key=AIzaSyAGVhV_ccOoZ3K9fGPCCvaOEUEdYd--hPI"></script>s
+      <script src="https://npmcdn.com/axios/dist/axios.min.js"></script>
+      <script type="text/javascript" src="http://www.chartjs.org/assets/Chart.js"></script>
+      <script src="resources/js/script.js" type="text/javascript"></script>
+    </body>
+    </html>

@@ -30,9 +30,9 @@ $(document).ready(function  () {
   //on enter press
   $(document).on('keypress', '#searchInput', function(event){
     if (event.which == 13) {
-        event.preventDefault();
-        searchCityAndGetWeather()
-      }  
+      event.preventDefault();
+      searchCityAndGetWeather()
+    }  
   })
 
   //navigation
@@ -54,9 +54,9 @@ $(document).ready(function  () {
   // paramName1=paramValue1&paramName2=paramValue2
   function prepRouteParams (params) {
     return Object.keys(params)
-      .map(function (key) {
-        return key + '=' + encodeURIComponent(params[key]);
-      }).join('&')
+    .map(function (key) {
+      return key + '=' + encodeURIComponent(params[key]);
+    }).join('&')
   }
 
   //gets a URL for weather API call based on city and type(today or forecast)
@@ -87,10 +87,9 @@ $(document).ready(function  () {
   //display todays weather
   function onGetTodaysWeather(todaysWeather){
     var data = todaysWeather.data
-  
+
     if(data.cod == 200){
       var weather = data.weather[0]
-      console.log(data)
 
       //add info to the main page
       var icon = weather.icon;
@@ -125,27 +124,123 @@ $(document).ready(function  () {
   //add found city to local Storage
   function addCityToStorage(city){
     if (localStorage.recentCities){
-          var arr = JSON.parse(localStorage.recentCities)
+      var arr = JSON.parse(localStorage.recentCities)
           //check if the city already there, if not, add it
           if (arr.indexOf(city) == -1){
             arr.unshift(city)
           }        
           localStorage.recentCities = JSON.stringify(arr)
 
-      }
-      else{
-        localStorage.recentCities = '["' + city + '"]'
+        }
+        else{
+          localStorage.recentCities = '["' + city + '"]'
+        }
+
       }
 
-  }
-  
   //display forecast
   function onGetForecast(forecast){
-      console.log(forecast.data)
+    var data = forecast.data
+
+    console.log(data)
+    //clear forecast for previous city
+    $('#weatherForecastContainer').html("<h1>" + data.city.name + "</h1>")
+
+     /*
+    var myLineChart = new Chart(myCanvas, {
+      type: 'line',
+      data: {
+        labels: ["Day 1", "Day 2", "Day 3", "Day 4", "Day 5"],
+        datasets: [
+        {
+          label: "Forecast",
+          fill: false,
+          lineTension: 0.1,
+          backgroundColor: "rgba(75,192,192,0.4)",
+          borderColor: "rgba(75,192,192,1)",
+          borderCapStyle: 'butt',
+          borderDash: [],
+          borderDashOffset: 0.0,
+          borderJoinStyle: 'miter',
+          pointBorderColor: "rgba(75,192,192,1)",
+          pointBackgroundColor: "#fff",
+          pointBorderWidth: 1,
+          pointHoverRadius: 5,
+          pointHoverBackgroundColor: "rgba(75,192,192,1)",
+          pointHoverBorderColor: "rgba(220,220,220,1)",
+          pointHoverBorderWidth: 2,
+          pointRadius: 1,
+          pointHitRadius: 10,
+          data: [
+          data.list[0].temp.day, 
+          data.list[1].temp.day, 
+          data.list[2].temp.day, 
+          data.list[3].temp.day, 
+          data.list[4].temp.day, 
+          ],
+          spanGaps: false,
+        }
+        ]
+      }
+    })
+    */
+    if(data.cod == 200){
+      for(var i = 0; i < data.cnt; i++)
+      {
+        var forecast = data.list[i]
+        //add info to the main page
+        var day = i+1;
+        var icon = forecast.weather[0].icon
+        var template = $('#forecast').html()
+        var renderJQP = Handlebars.compile(template)
+        var html = renderJQP({
+          day: day,
+          icon: icon, 
+          temp: forecast.temp.day,
+          
+        })
+
+        $('#weatherForecastContainer').append(html)   
+      } 
+      
+      var myCanvas = $('#myCanvas')
+      var forecastData = {
+        labels : ["Day 1", "Day 2", "Day 3", "Day 4", "Day 5"],
+        datasets :
+        [
+        {
+          fillColor : "rgba(172,194,132,0.4)",
+          strokeColor : "#ACC26D",
+          pointColor : "#fff",
+          pointStrokeColor : "#9DB86D",
+          data : [
+          data.list[0].temp.day, 
+          data.list[1].temp.day, 
+          data.list[2].temp.day, 
+          data.list[3].temp.day, 
+          data.list[4].temp.day
+          ]
+        }
+        ]
+      }
+      var forecastChart = document.getElementById('myCanvas').getContext('2d');
+      new Chart(forecastChart).Line(forecastData);
+
+      //hide previous errors
+      $(errorContainer).hide()
+    }
+    else
+    {
+      //show error
+      var msg = 'City not found'
+      $(errorMessage).html(msg)
+      $(errorContainer).show()
+    }
+
       //TODO: add info to forecast page
       //add a chart
       //style everything
-  }
+    }
 
   //get current location
   function getLocation(){
@@ -157,19 +252,19 @@ $(document).ready(function  () {
           myLocation.lat = position.coords.latitude
           myLocation.lng = position.coords.longitude
           d.resolve()
-      }, function showError(err){
-        var msg = "Failed to get your position: " + err.message
-        console.log(msg)
-        $(errorMessage).html(msg)
-        $(errorContainer).show()
-        d.reject()
-      })     
+        }, function showError(err){
+          var msg = "Failed to get your position: " + err.message
+          console.log(msg)
+          $(errorMessage).html(msg)
+          $(errorContainer).show()
+          d.reject()
+        })     
     }
     else {
       var msg = 'geolocation is not supported in your browser'
       console.log(msg)
       $(errorMessage).html(msg)
-       $(errorContainer).show()
+      $(errorContainer).show()
       d.reject()
     }
     return d.promise()
@@ -178,7 +273,7 @@ $(document).ready(function  () {
   //get a list of predefined cities
   function populateRecent(){
      //populate the list of recent cities
-    if(localStorage.recentCities){
+     if(localStorage.recentCities){
       template = $('#recentListItems').html()
       renderJQP = Handlebars.compile(template)
       html = renderJQP({
@@ -209,7 +304,6 @@ $(document).ready(function  () {
       axios.get(url)
       .then(function(data){
         city = data.data.results[1].formatted_address
-        console.log(city)
         d.resolve()
       })
     }).fail(function(){
@@ -242,9 +336,9 @@ $(document).ready(function  () {
   //get city and weather for this city
   getCity().done(function(){
      //get weather
-    getWeatherAndForecast()
-  })
- 
+     getWeatherAndForecast()
+   })
+
   
 
 })
