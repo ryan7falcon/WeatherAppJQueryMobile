@@ -231,60 +231,39 @@ $(document).ready(function  () {
   //display forecast
   function onGetForecast(forecast){
     var data = forecast.data
-
+    var day = new Date();
+    var days = [
+    "Sunday",
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday", 
+    "Sunday",
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday"
+    ];
+       
     console.log(data)
     //clear forecast for previous city
     $('#weatherForecastContainer').html("<h1>" + data.city.name + "</h1>")
 
-     /*
-    var myLineChart = new Chart(myCanvas, {
-      type: 'line',
-      data: {
-        labels: ["Day 1", "Day 2", "Day 3", "Day 4", "Day 5"],
-        datasets: [
-        {
-          label: "Forecast",
-          fill: false,
-          lineTension: 0.1,
-          backgroundColor: "rgba(75,192,192,0.4)",
-          borderColor: "rgba(75,192,192,1)",
-          borderCapStyle: 'butt',
-          borderDash: [],
-          borderDashOffset: 0.0,
-          borderJoinStyle: 'miter',
-          pointBorderColor: "rgba(75,192,192,1)",
-          pointBackgroundColor: "#fff",
-          pointBorderWidth: 1,
-          pointHoverRadius: 5,
-          pointHoverBackgroundColor: "rgba(75,192,192,1)",
-          pointHoverBorderColor: "rgba(220,220,220,1)",
-          pointHoverBorderWidth: 2,
-          pointRadius: 1,
-          pointHitRadius: 10,
-          data: [
-          data.list[0].temp.day, 
-          data.list[1].temp.day, 
-          data.list[2].temp.day, 
-          data.list[3].temp.day, 
-          data.list[4].temp.day, 
-          ],
-          spanGaps: false,
-        }
-        ]
-      }
-    })
-    */
     if(data.cod == 200){
       for(var i = 0; i < data.cnt; i++)
       {
         var forecast = data.list[i]
         //add info to the main page
-        var day = i+1;
+        var d =  days[day.getDay()+i+1]
         var icon = forecast.weather[0].icon
         var template = $('#forecast').html()
         var renderJQP = Handlebars.compile(template)
         var html = renderJQP({
-          day: day,
+          day: d,
           icon: icon, 
           temp: forecast.temp.day,
           
@@ -295,14 +274,20 @@ $(document).ready(function  () {
       
       var myCanvas = $('#myCanvas')
       var forecastData = {
-        labels : ["Day 1", "Day 2", "Day 3", "Day 4", "Day 5"],
+        labels : [
+        days[day.getDay()+1], 
+        days[day.getDay()+2], 
+        days[day.getDay()+3], 
+        days[day.getDay()+4], 
+        days[day.getDay()+5]
+        ],
         datasets :
         [
         {
-          fillColor : "rgba(172,194,132,0.4)",
-          strokeColor : "#ACC26D",
+          fillColor : "rgba(255,255,255, 0.2)",
+          strokeColor : "#000033",
           pointColor : "#fff",
-          pointStrokeColor : "#9DB86D",
+          pointStrokeColor : "#000033",
           data : [
           data.list[0].temp.day, 
           data.list[1].temp.day, 
