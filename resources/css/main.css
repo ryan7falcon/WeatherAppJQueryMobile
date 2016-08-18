@@ -1,3 +1,37 @@
+h1 {
+  text-align: center;
+}
+.flex-container {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+  max-width: 300px;
+  margin: 0 auto;
+  display: flex;
+  
+  -webkit-flex-flow: row wrap;
+  justify-content: space-around;
+}
+
+.flex-item {
+  background: black;
+  padding: 5px;
+  width: 80px;
+  height: 50px;
+  margin-top: 10px;
+
+  color: white;
+  font-weight: bold;
+  font-size: 1em;
+  text-align: center;
+  line-height: 50px;
+}
+
+.flex-item .icon {
+  height: 50%;
+  width: 50%;
+}
+
 html {
 	
 }
@@ -20,5 +54,8 @@ html {
   align-items: center;
   justify-content: center;
   flex-direction: column;
-  margin:55px
+}
+
+.dayContainer div {
+  padding: 5px;
 }
