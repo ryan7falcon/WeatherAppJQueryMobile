@@ -49,7 +49,7 @@
     </div>
 
     <div id="weatherForecastContainer" role="main"></div>
-    <canvas id="myCanvas" width="400" height="400"><canvas>
+    <div class="canvasContainer"><canvas id="myCanvas" width="300" height="300"><canvas></div>
 
   </div>
 
@@ -71,8 +71,8 @@
     <h1>{{city}}</h1>
 
     <img class='icon' src="resources/images/weather-icons/{{icon}}.svg" alt="Weather" />  
-    <div>{{desc}}</div>  
-    <div>{{temp}} C</div>
+    <h3>{{desc}}</h3>  
+    <h3>{{temp}} C</h3>
   </div>
 
 </script>
@@ -82,7 +82,7 @@
   <div class="forecastContainer">
 
     <ul class="flex-container">
-      <li class="flex-item">Day: {{day}}</li>
+      <li class="flex-item">{{day}}</li>
       <li class="flex-item"> <img class='icon' src="resources/images/weather-icons/{{icon}}.svg" alt="Weather" />  </li>
       <li class="flex-item">{{temp}} C</li>
       <ul>
