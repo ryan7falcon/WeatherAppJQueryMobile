@@ -10,11 +10,10 @@ var _city
 var myLocation = {}
 
 $(document).on("pageshow", "#forecastPage", function(event){
-  //get city and weather for this city
+  //get city and forecast for this city
   if (_city == null){
     getCity().done(function(){
-       //get weather
-       //getWeatherAndForecast()
+       //get forecast
        getForecast(_city).then(onGetForecast)
      })   
   }
@@ -41,7 +40,7 @@ $(document).ready(function  () {
   //on click on listview item in recent searches
   $(document).on('click', '.cityListItem', function(){
     _city = $(this).text()
-    getWeatherAndForecast()
+    getWeatherAndScroll()
   })
 
   //on enter press
@@ -71,7 +70,7 @@ $(document).ready(function  () {
   //get city and weather for this city
   getCity().done(function(){
      //get weather
-     //getWeatherAndForecast()
+     //getWeatherAndScroll()
      getTodaysWeather(_city).then(onGetTodaysWeather)
    })
 
@@ -79,7 +78,7 @@ $(document).ready(function  () {
   //get the name of the city from the search box and get weather
   function searchCityAndGetWeather(){
     _city = $(searchInput).val()
-    getWeatherAndForecast()
+    getWeatherAndScroll()
   }
 
   // converts an object with parameters to a query string like 
@@ -180,11 +179,11 @@ $(document).ready(function  () {
   
 
   //get todays weather and forecast and scroll up
-  function getWeatherAndForecast(){
+  function getWeatherAndScroll(){
     //get current weather
     getTodaysWeather(_city).then(onGetTodaysWeather)
     //get forecast
-    getForecast(_city).then(onGetForecast)
+    //getForecast(_city).then(onGetForecast)
     //scroll to top
     $.mobile.silentScroll(0)
   }
