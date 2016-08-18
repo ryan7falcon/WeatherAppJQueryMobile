@@ -2,14 +2,31 @@ if (!window.jQuery){
 	console.log('jQuery is not loaded')
 }
 
+//openweathermap.org weather api
+var _apiUrl = 'http://api.openweathermap.org/data/2.5/'
+var _api_key = 'b714ec74bbab5650795063cb0fdf5fbe'
+//current city
+var _city
+var myLocation = {}
+
+$(document).on("pageshow", "#forecastPage", function(event){
+  //get city and weather for this city
+  if (_city == null){
+    getCity().done(function(){
+       //get weather
+       //getWeatherAndForecast()
+       getForecast(_city).then(onGetForecast)
+     })   
+  }
+  else{
+    getForecast(_city).then(onGetForecast)
+  }
+
+})
+
+
 $(document).ready(function  () {
 
-  //openweathermap.org weather api
-  var _apiUrl = 'http://api.openweathermap.org/data/2.5/'
-  var _api_key = 'b714ec74bbab5650795063cb0fdf5fbe'
-  //current city
-  var city
-  var myLocation = {}
 
   $(errorContainer).hide()
 
@@ -23,7 +40,7 @@ $(document).ready(function  () {
 
   //on click on listview item in recent searches
   $(document).on('click', '.cityListItem', function(){
-    city = $(this).text()
+    _city = $(this).text()
     getWeatherAndForecast()
   })
 
@@ -44,9 +61,24 @@ $(document).ready(function  () {
     $.mobile.changePage("#forecastPage")
   })
 
+  //populate the list of default cities
+  axios.get('resources/data/data.json')
+  .then(function (response){
+    var defaultCities = response.data.cities   
+    populateDefault(defaultCities)
+  })
+  
+  //get city and weather for this city
+  getCity().done(function(){
+     //get weather
+     //getWeatherAndForecast()
+     getTodaysWeather(_city).then(onGetTodaysWeather)
+   })
+
+})
   //get the name of the city from the search box and get weather
   function searchCityAndGetWeather(){
-    city = $(searchInput).val()
+    _city = $(searchInput).val()
     getWeatherAndForecast()
   }
 
@@ -78,11 +110,7 @@ $(document).ready(function  () {
     return axios.get(url)
   }
 
-  //gets forecast
-  function getForecast(city){
-    var url = getUrl(city, 'forecast/daily')
-    return axios.get(url)
-  }
+  
 
   //display todays weather
   function onGetTodaysWeather(todaysWeather){
@@ -93,12 +121,12 @@ $(document).ready(function  () {
 
       //add info to the main page
       var icon = weather.icon;
-      var city = data.name
+      _city = data.name
       var template = $('#today').html()
       var renderJQP = Handlebars.compile(template)
       var html = renderJQP({
         icon: icon, 
-        city: city,
+        city: _city,
         desc: weather.description,
         temp: data.main.temp,
         
@@ -106,7 +134,7 @@ $(document).ready(function  () {
       $('#weatherHomeContainer').html(html)   
 
       //add searched city to local storage
-      addCityToStorage(city)
+      addCityToStorage(_city)
       //update the list
       populateRecent()
       //hide previous errors
@@ -121,6 +149,45 @@ $(document).ready(function  () {
     
   }
 
+  //get a list of predefined cities
+  function populateRecent(){
+     //populate the list of recent cities
+     if(localStorage.recentCities){
+      template = $('#recentListItems').html()
+      renderJQP = Handlebars.compile(template)
+      html = renderJQP({
+        searchHistory: JSON.parse(localStorage.recentCities)
+      })
+      $('#recent').html(html)
+      $(recent).listview()
+      $(recent).listview('refresh')     
+      
+    }
+  }
+
+  //populate the list of default cities as a datalist for input text box
+  function populateDefault(defaultCities){
+    template = $('#defaultListItems').html()
+    renderJQP = Handlebars.compile(template)
+    html = renderJQP({
+      defaultCities: defaultCities
+    })
+    $('#default').html(html)
+    $('#default').listview()
+    $('#default').listview('refresh')   
+  }
+
+  
+
+  //get todays weather and forecast and scroll up
+  function getWeatherAndForecast(){
+    //get current weather
+    getTodaysWeather(_city).then(onGetTodaysWeather)
+    //get forecast
+    getForecast(_city).then(onGetForecast)
+    //scroll to top
+    $.mobile.silentScroll(0)
+  }
   //add found city to local Storage
   function addCityToStorage(city){
     if (localStorage.recentCities){
@@ -137,6 +204,30 @@ $(document).ready(function  () {
         }
 
       }
+
+  //get current city
+  function getCity(){
+    var d = $.Deferred()
+    getLocation().done(function(){
+      //get city name using coordinates
+      var url = 'http://maps.googleapis.com/maps/api/geocode/json?latlng='+myLocation.lat+','+myLocation.lng+'&sensor=true'
+      axios.get(url)
+      .then(function(data){
+        _city = data.data.results[1].formatted_address
+        d.resolve()
+      })
+    }).fail(function(){
+      _city = 'Toronto'
+      d.resolve()
+    })
+    return d.promise()
+  }
+
+  //gets forecast
+  function getForecast(city){
+    var url = getUrl(city, 'forecast/daily')
+    return axios.get(url)
+  }
 
   //display forecast
   function onGetForecast(forecast){
@@ -269,76 +360,3 @@ $(document).ready(function  () {
     }
     return d.promise()
   }
-
-  //get a list of predefined cities
-  function populateRecent(){
-     //populate the list of recent cities
-     if(localStorage.recentCities){
-      template = $('#recentListItems').html()
-      renderJQP = Handlebars.compile(template)
-      html = renderJQP({
-        searchHistory: JSON.parse(localStorage.recentCities)
-      })
-      $('#recent').html(html)
-      $(recent).listview('refresh')     
-    }
-  }
-
-  //populate the list of default cities as a datalist for input text box
-  function populateDefault(defaultCities){
-    template = $('#searchComponent').html()
-    renderJQP = Handlebars.compile(template)
-    html = renderJQP({
-      defaultCities: defaultCities
-    })
-    $('#searchContainer').html(html)
-    $(searchInput).textinput()
-  }
-
-  //get current city
-  function getCity(){
-    var d = $.Deferred()
-    getLocation().done(function(){
-      //get city name using coordinates
-      var url = 'http://maps.googleapis.com/maps/api/geocode/json?latlng='+myLocation.lat+','+myLocation.lng+'&sensor=true'
-      axios.get(url)
-      .then(function(data){
-        city = data.data.results[1].formatted_address
-        d.resolve()
-      })
-    }).fail(function(){
-      city = 'Toronto'
-      d.resolve()
-    })
-    return d.promise()
-  }
-
-  //get todays weather and forecast and scroll up
-  function getWeatherAndForecast(){
-    //get current weather
-    getTodaysWeather(city).then(onGetTodaysWeather)
-    //get forecast
-    getForecast(city).then(onGetForecast)
-    //scroll to top
-    $.mobile.silentScroll(0)
-  }
-
-  //populate the list of recent cities
-  populateRecent()
-
-  //populate the list of default cities
-  axios.get('resources/data/data.json')
-  .then(function (response){
-    var defaultCities = response.data.cities   
-    populateDefault(defaultCities)
-  })
-  
-  //get city and weather for this city
-  getCity().done(function(){
-     //get weather
-     getWeatherAndForecast()
-   })
-
-  
-
-})
